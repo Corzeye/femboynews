@@ -14,7 +14,7 @@
   }
 })();
 </script>
-<link rel="icon" type="image/png" href="ads/image1.png">
+<link rel="icon" type="image/png" href="/ads/image1.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -655,6 +655,7 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
           <div class="ad-headline">FEMI — Femboy Insurance LLC — Coverage For Every Occasion</div>
           <div class="ad-url">femi-insurance.example.com</div>
           <div class="ad-body">Even femboys need insurance. Plans from €4.99/month. We don't judge. We just cover it. FCA regulated.</div>
+          <div style="font-size:9px;color:#bbb;margin-top:.4rem;line-height:1.5;">FEMI is a trading name of Femboy Insurance LLC, authorised and regulated by the Financial Conduct Authority (FRN 847201). Insurance products are underwritten by FemShield Underwriting Group Ltd. Your policy may not cover events caused by poor life choices, unsanctioned nail polish experiments, or acts of god. Premium rates are subject to change. Terms, conditions, and exclusions apply. FEMI is not responsible for any emotional distress caused by the claims process. This advertisement was approved by someone at FEMI. Femboy News Media Group Ltd is an appointed representative of FEMI for the purposes of this advertisement only.</div>
         </div>
       </div>
 
@@ -1229,14 +1230,64 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
     </div>
     <div class="media-grid" id="mediaGrid">
 
-      <!-- Slot 1: example gif -->
-      <div class="media-card">
+   <div class="media-card">
         <div class="media-container">
-          <img src="https://upload.garance.cat/cat/cherry.gif" alt="cherry" onerror="this.style.display='none';" />
+          <video controls style="width:100%;max-height:260px;display:block;">
+            <source src="https://static1.e621.net/data/06/19/0619ff5a8270aed7b22ca3981b783224.webm" type="video/webm" />
+          </video>
         </div>
         <div class="mc-body">
-          <div class="mc-title">cherry.gif</div>
-          <div class="mc-desc">A classic.</div>
+          <div class="mc-title">Zonkpunch Peak</div>
+          <div class="mc-desc">Very popular, but fucking peak nonetheless</div>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="media-container">
+          <video controls style="width:100%;max-height:260px;display:block;">
+            <source src="https://static1.e621.net/data/fb/35/fb35823b578b60d25c118d6bbffecce2.webm" type="video/webm" />
+          </video>
+        </div>
+        <div class="mc-body">
+          <div class="mc-title">Fluffydisk42 Peak</div>
+          <div class="mc-desc">Also quite popular, but also quite peak</div>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="media-container">
+          <video controls style="width:100%;max-height:260px;display:block;">
+            <source src="https://static1.e621.net/data/12/3c/123cb3ac3de44687868e2effd50c8954.mp4" type="video/webm" />
+          </video>
+        </div>
+        <div class="mc-body">
+          <div class="mc-title">Cheetah gets fucked in the ass (Peak)</div>
+          <div class="mc-desc">Just watch the video man idk how to describe this, other than it's fucking peak</div>
+        </div>
+      </div>
+
+
+      <div class="media-card">
+        <div class="media-container">
+          <video controls style="width:100%;max-height:260px;display:block;">
+            <source src="https://static1.e621.net/data/d1/62/d162e355b96b08920a08558c00dff843.webm" type="video/webm" />
+          </video>
+        </div>
+        <div class="mc-body">
+          <div class="mc-title">I'm running out of thigns to call these</div>
+          <div class="mc-desc">Slit play is peak idc what anyone says</div>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="media-container">
+          <video controls style="width:100%;max-height:260px;display:block;">
+            <source src="https://static1.e621.net/data/sample/0e/31/0e3162045155aea46990043eb5e1dc38_720p.mp4" type="video/webm" />
+          </video>
+        </div>
+        <div class="mc-body">
+          <div class="mc-title">Fortnite Battle Smash</div>
+          <div class="mc-desc">fortnite balls</div>
         </div>
       </div>
 
@@ -1451,6 +1502,10 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
      FOOTER
 ══════════════════════════════════════ -->
 
+<div style="background:#1a1a1a;color:#faf8f2;text-align:center;padding:.6rem 1rem;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;" onclick="window.open('https://youtube.com/watch?v=dQw4w9WgXcQ','_blank')">
+  <span style="color:#888;">Proudly sponsored by</span> &nbsp;<strong style="color:#fff;font-size:12px;">FBN</strong>&nbsp; <span style="color:#888;">— Official Partner of Femboy News</span>
+</div>
+
 <footer class="footer">
   <h3>Femboy News</h3>
   <div class="footer-links" style="margin-top:1rem;">
@@ -1656,7 +1711,7 @@ function doSignup() {
   err.textContent = signupErrors[Math.floor(Math.random() * signupErrors.length)];
 }
 
-const imageAds = ['ads/ad1.png','ads/ad2.png','ads/ad3.png','ads/ad4.png','ads/ad5.png','ads/ad6.png'];
+const imageAds = ['/ads/ad1.png','/ads/ad2.png','/ads/ad3.png','/ads/ad4.png','/ads/ad5.png','/ads/ad6.png'];
 function randomAd(excludes) { const pool = imageAds.filter(a => !excludes.includes(a)); return pool[Math.floor(Math.random()*pool.length)]; }
 
 const adLinks = [
@@ -1710,11 +1765,13 @@ function buildTextAd(ad) {
 
 const textAds = [
   { type:'google', headline:'FEMI — Femboy Insurance LLC — Coverage For Every Occasion', url:'femi-insurance.example.com', body:"Even femboys need insurance. Plans from €4.99/month. We don't judge. We just cover it. FCA regulated." },
+  { type:'google', headline:'FBN — Official Partner of Femboy News', url:'fbn.example.com', body:'FBN. You know what it is.' },
   { type:'google', headline:'NailHaus Pro — 200+ Shades, Ships to Finland, 15% Off First Order', url:'nailhaus.example.com', body:'Professional nail polish at home prices. Free returns. Loved by 40,000+ customers.' },
   { type:'google', headline:"Cloud Sock Shop — Finland's #1 Sock Destination", url:'cloudsockshop.example.com', body:'Over 400 styles of socks. Free shipping over €15.' },
   { type:'google', headline:'DiscordBooster Pro — Grow Your Server Fast', url:'discordbooster.example.com', body:'Real members. 100% definitely not bots. Plans from €4.99/month.' },
   { type:'google', headline:'PassVault — Remember All Passwords Without Remembering Any', url:'passvault.example.com', body:'Secure, simple password management. Free plan available.' },
   { type:'google', headline:'FemShield Underwriting Group — Reinsurance Solutions', url:'femshield-uw.example.com', body:'Institutional reinsurance for modern lifestyle brands. EU regulated. Est. 2019.' },
+  { type:'banner', headline:'FBN — Proud Sponsor of Femboy News', body:'fbn.example.com', cta:'Learn More', bg:'linear-gradient(135deg,#1a1a1a,#2d2d2d)', btnStyle:'background:#c0392b;' },
   { type:'banner', headline:'FEMI — Because Bad Things Happen to Good Femboys', body:'Health, contents, and lifestyle coverage. No awkward questions.', cta:'Get Free Quote', bg:'linear-gradient(135deg,#1a3a8a,#2a52c9)', btnStyle:'background:#fff;color:#1a3a8a;' },
   { type:'banner', headline:'NailHaus Pro — Your Nails Deserve Better', body:'200+ shades. First order 15% off.', cta:'Shop Now', bg:'linear-gradient(135deg,#e8c5d5,#d4a0bc)' },
   { type:'banner', headline:'Cloud Sock Shop — Life Is Too Short for Boring Socks', body:'Free shipping on orders over €15.', cta:'Browse', bg:'linear-gradient(135deg,#c5d8e8,#a0bcd4)' },
@@ -1750,7 +1807,6 @@ function spawnFloatingAd() {
     <div class="float-ad-label">Advertisement</div>
   `;
   document.body.appendChild(div);
-  setTimeout(() => { if (div.parentElement) div.remove(); }, 12000);
 }
 
 function injectAds() {
@@ -1770,7 +1826,7 @@ const popupAds = [
 ];
 
 // Also randomly show image popups
-const imagePopupList = ['ads/ad1.png','ads/ad2.png','ads/ad3.png','ads/ad4.png','ads/ad5.png','ads/ad6.png'];
+const imagePopupList = ['/ads/ad1.png','/ads/ad2.png','/ads/ad3.png','/ads/ad4.png','/ads/ad5.png','/ads/ad6.png'];
 
 function showRandomPopup() {
   if (isOnSecretPage()) return;
@@ -1881,7 +1937,7 @@ function showPremiumArticle(slug) {
 }
 
 
-const videoAdSources = Array.from({length:15}, (_,i) => `vid${i+1}.mp4`);
+const videoAdSources = Array.from({length:15}, (_,i) => `/vid${i+1}.mp4`);
 let videoAdCountdownInterval = null;
 
 function closeVideoAd() {
