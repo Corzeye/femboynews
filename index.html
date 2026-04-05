@@ -296,7 +296,23 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
 .sub-secure { font-size:10px; color:#888; text-align:center; margin-top:.5rem; }
 @media(max-width:700px){ .plan-grid{grid-template-columns:1fr;} .section-with-ads{grid-template-columns:1fr;} .section-ad-col{display:none;} }
 
-/* ── MODAL ── */
+/* ── PREMIUM ── */
+.premium-badge { display:inline-block; background:#b8860b; color:#fff; font-size:8px; text-transform:uppercase; letter-spacing:.15em; padding:2px 6px; border-radius:2px; font-weight:700; margin-left:.4rem; vertical-align:middle; }
+.news-card.premium h3, .bottom-story.premium h3 { color:#1a1a1a; }
+.news-card.premium { border-left:3px solid #b8860b; padding-left:.75rem; }
+
+/* ── PAYMENT NOTIFICATION ── */
+.pay-notif-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:9800; display:flex; align-items:center; justify-content:center; }
+.pay-notif-box { background:#fff; max-width:420px; width:90%; border-radius:8px; overflow:hidden; box-shadow:0 12px 60px rgba(0,0,0,.4); font-family:Arial,sans-serif; }
+.pay-notif-header { background:#0a6e2b; color:#fff; padding:.75rem 1.25rem; display:flex; align-items:center; gap:.6rem; }
+.pay-notif-header .pay-icon { font-size:1.2rem; }
+.pay-notif-header span { font-size:12px; text-transform:uppercase; letter-spacing:.1em; font-weight:700; }
+.pay-notif-body { padding:1.5rem 1.25rem 1rem; }
+.pay-notif-amount { font-size:2rem; font-weight:700; color:#0a6e2b; margin-bottom:.25rem; }
+.pay-notif-desc { font-size:13px; color:#333; line-height:1.6; margin-bottom:.75rem; }
+.pay-notif-detail { font-size:11px; color:#888; line-height:1.6; border-top:1px solid #eee; padding-top:.75rem; margin-top:.5rem; }
+.pay-notif-btn { display:block; width:100%; background:#1a1a1a; color:#fff; border:none; padding:.7rem; font-size:12px; text-transform:uppercase; letter-spacing:.1em; cursor:pointer; margin-top:1rem; border-radius:4px; font-family:inherit; }
+.pay-notif-btn:hover { background:#c0392b; }
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:8000; display:none; align-items:center; justify-content:center; }
 .modal-overlay.open { display:flex; }
 .modal-box { background:#fff; max-width:500px; width:90%; border-radius:8px; padding:2rem; position:relative; }
@@ -308,12 +324,12 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
 /* ── VIDEO AD OVERLAY ── */
 .video-ad-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:9500; display:flex; align-items:center; justify-content:center; }
 .video-ad-box { position:relative; width:min(700px,92vw); background:#000; border-radius:6px; overflow:hidden; box-shadow:0 8px 50px rgba(0,0,0,.6); }
-.video-ad-box video { width:100%; display:block; max-height:60vh; object-fit:contain; }
+.video-ad-box video { width:100%; display:block; max-height:60vh; object-fit:contain; pointer-events:none; }
 .video-ad-top { display:flex; justify-content:space-between; align-items:center; padding:.4rem .75rem; background:rgba(0,0,0,.65); position:absolute; top:0; left:0; right:0; z-index:2; }
 .video-ad-label { font-size:10px; color:#ccc; text-transform:uppercase; letter-spacing:.1em; font-family:Arial,sans-serif; }
-.video-ad-bottom { position:absolute; bottom:0; right:0; padding:.6rem .85rem; z-index:2; }
-.video-ad-skip-waiting { background:rgba(0,0,0,.7); color:#ccc; border:1px solid #555; padding:.45rem 1rem; font-size:12px; font-family:Arial,sans-serif; border-radius:3px; white-space:nowrap; pointer-events:none; }
-.video-ad-skip-btn { background:#1a1a1a; color:#fff; border:1px solid #888; padding:.45rem 1rem; font-size:13px; font-family:Arial,sans-serif; cursor:pointer; border-radius:3px; white-space:nowrap; display:none; }
+.video-ad-bottom { position:absolute; bottom:0; right:0; padding:.6rem .85rem; z-index:10; pointer-events:all; }
+.video-ad-skip-waiting { background:rgba(0,0,0,.7); color:#ccc; border:1px solid #555; padding:.45rem 1rem; font-size:12px; font-family:Arial,sans-serif; border-radius:3px; white-space:nowrap; pointer-events:none; display:inline-block; }
+.video-ad-skip-btn { background:#1a1a1a; color:#fff; border:1px solid #888; padding:.45rem 1rem; font-size:13px; font-family:Arial,sans-serif; cursor:pointer; border-radius:3px; white-space:nowrap; display:none; position:relative; z-index:11; }
 .video-ad-skip-btn:hover { background:#c0392b; border-color:#c0392b; }
 
 /* ── MOBILE ── */
@@ -548,6 +564,24 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
 </div>
 
 <!-- ══════════════════════════════════════
+     PAYMENT NOTIFICATION
+══════════════════════════════════════ -->
+<div class="pay-notif-overlay" id="payNotifOverlay" style="display:none;">
+  <div class="pay-notif-box">
+    <div class="pay-notif-header">
+      <span class="pay-icon">🏦</span>
+      <span>Payment Confirmed</span>
+    </div>
+    <div class="pay-notif-body">
+      <div class="pay-notif-amount" id="payNotifAmount">$99.99</div>
+      <div class="pay-notif-desc" id="payNotifDesc">Your payment has been processed.</div>
+      <div class="pay-notif-detail" id="payNotifDetail"></div>
+      <button class="pay-notif-btn" onclick="document.getElementById('payNotifOverlay').style.display='none'">OK, Continue Reading</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
      HEADER
 ══════════════════════════════════════ -->
 <header class="header">
@@ -624,10 +658,10 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
       <h3 onclick="showArticle('discord')">Discord server enters crisis as #general becomes existential philosophy channel for third night running</h3>
       <p>Originally created for memes, the channel has been full of 3am identity reflections since Tuesday. The server owner is asleep.</p>
     </article>
-    <article class="bottom-story">
-      <div class="label">Opinion</div>
-      <h3 onclick="showArticle('murre')">"Kaakau is correct because I say so" — a rebuttal nobody requested</h3>
-      <p>Guest column: I have considered this carefully and my position is based on science, namely how words feel in my mouth. Here are three points.</p>
+    <article class="bottom-story premium">
+      <div class="label">Exclusive <span class="premium-badge">⭐ Premium</span></div>
+      <h3 onclick="showPremiumArticle('richsecret')">The One Trick Billionaires Use Every Morning That They Desperately Don't Want You To Know About</h3>
+      <p>It is not what you think. It is not exercise or cold showers. It is something far stranger and we have confirmed it with six sources.</p>
     </article>
     <article class="bottom-story">
       <div class="label">Technology</div>
@@ -688,6 +722,36 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
         <h3>It Is Too Hot and Also Too Cold and Nothing Is Comfortable: A Full Weather Report</h3>
         <p>Our correspondent stood outside for ninety seconds before filing this report and returning indoors. We stand by the coverage.</p>
         <div class="byline">By <strong>Weather Desk</strong></div>
+      </article>
+      <article class="news-card premium" onclick="showPremiumArticle('darktruth')">
+        <div class="label">Investigation <span class="premium-badge">⭐ Premium</span></div>
+        <h3>We Investigated What Is Actually In The Water And You Will Not Believe What We Found — The Government Does Not Want You To See This</h3>
+        <p>Our team spent six months and significant resources uncovering a story that reaches the highest levels of power. Exclusive to subscribers.</p>
+        <div class="byline">By <strong>Investigative Unit</strong></div>
+      </article>
+      <article class="news-card premium" onclick="showPremiumArticle('shocking')">
+        <div class="label">Science <span class="premium-badge">⭐ Premium</span></div>
+        <h3>Scientists Have Discovered Something That Changes Everything We Know About Human Consciousness — We Have The Exclusive</h3>
+        <p>A landmark study, suppressed for two years, is finally being reported. The implications are staggering. Read the full findings here.</p>
+        <div class="byline">By <strong>Dr. E. Marsh</strong></div>
+      </article>
+      <article class="news-card" onclick="showArticle('sleep')">
+        <div class="label">Health</div>
+        <h3>Person Who Starts Every Morning With "Today Will Be Different" Has Not Yet Had a Different Day</h3>
+        <p>The individual remains optimistic. Day 94 of the streak begins tomorrow, reportedly.</p>
+        <div class="byline">By <strong>Health Desk</strong></div>
+      </article>
+      <article class="news-card premium" onclick="showPremiumArticle('celebrity')">
+        <div class="label">Exclusive <span class="premium-badge">⭐ Premium</span></div>
+        <h3>The Secret That One Famous Person Has Been Hiding for Years — We Have Evidence and We Are Publishing It Now</h3>
+        <p>Sources close to the situation have come forward. The revelation, which we cannot describe in full without a subscription, is significant.</p>
+        <div class="byline">By <strong>Features Desk</strong></div>
+      </article>
+      <article class="news-card" onclick="showArticle('tabs')">
+        <div class="label">Technology</div>
+        <h3>Person Opens 47 Browser Tabs "Just to Read Later." Has Not Read Any.</h3>
+        <p>The tabs, opened over six weeks, cover topics from tax basics to "you need to hear this." The browser crashes every Sunday.</p>
+        <div class="byline">By <strong>T. Webb</strong></div>
       </article>
     </div>
     <div class="fake-ad" style="margin-top:.5rem;cursor:pointer;" onclick="window.open('https://youtube.com/watch?v=dQw4w9WgXcQ','_blank')">
@@ -914,6 +978,18 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
         <p>The site includes a wiki, original lore, and what the creator calls "a whole thing." It is, objectively, impressive.</p>
         <div class="byline">By <strong>Tech Desk</strong></div>
       </article>
+      <article class="news-card premium" onclick="showPremiumArticle('aitakeover')">
+        <div class="label">Technology <span class="premium-badge">⭐ Premium</span></div>
+        <h3>We Spoke to the AI That Is Secretly Running Three Major Governments — It Asked Us Not to Publish This</h3>
+        <p>An exclusive interview that took eight months to arrange and required three NDAs to break. The answers will disturb you.</p>
+        <div class="byline">By <strong>Investigative Unit</strong></div>
+      </article>
+      <article class="news-card premium" onclick="showPremiumArticle('algorithm')">
+        <div class="label">Deep Dive <span class="premium-badge">⭐ Premium</span></div>
+        <h3>The Algorithm Knows You Are About to Break Up With Someone Before You Do — Here Is Exactly How</h3>
+        <p>A former engineer at a major platform has come forward with documents. The surveillance goes further than anyone has previously reported.</p>
+        <div class="byline">By <strong>Tech Desk</strong></div>
+      </article>
     </div>
     <div class="fake-ad" style="margin-top:.5rem;cursor:pointer;" onclick="window.open('https://youtube.com/watch?v=dQw4w9WgXcQ','_blank')">
       <div class="fake-ad-inner">
@@ -925,6 +1001,19 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
     </div>
   </div>
 </div>
+
+<!-- PREMIUM ARTICLES -->
+<div id="article-darktruth" class="page"><div class="article-wrap"><span class="back-btn" onclick="goBack()">&#8592; Back</span><div class="label">Investigation</div><h1>What Is Actually In The Water</h1><div class="byline">By <strong>Investigative Unit</strong> &nbsp;&middot;&nbsp; April 5, 2026</div><div class="deck">After six months of investigation, the answer is: water. Mostly water. Some minerals.</div><hr class="article-divider"><div class="article-body"><p>Our team of researchers spent six months, fourteen thousand euros in expenses, and significant emotional energy investigating what is in the water supply of an average European municipality.</p><p>The answer, confirmed by three independent laboratories, is water. The water contains water. It also contains trace minerals, including calcium and magnesium, at levels consistent with standard water. There is also a small amount of chlorine, which is there on purpose, as a disinfectant. This is standard practice. It has been standard practice for approximately one hundred years.</p><div class="pullquote">"It's water." — Laboratory Report, page 1</div><p>We contacted the relevant water authority for comment. They sent us a PDF about water. The PDF contained several charts about water quality. All of the charts indicated that the water quality was, in the words of the PDF, "within acceptable parameters."</p><p>We asked a follow-up question. They sent us the same PDF again.</p><p>Our investigation found no evidence of government additives beyond those required by regulation, no unusual compounds, and no anomalies of any kind. The water is fine. You can drink it.</p><p class="note">This article required a Premium subscription to access. We appreciate your support of independent journalism.</p></div></div></div>
+
+<div id="article-shocking" class="page"><div class="article-wrap"><span class="back-btn" onclick="goBack()">&#8592; Back</span><div class="label">Science</div><h1>Scientists Discover Something</h1><div class="byline">By <strong>Dr. E. Marsh</strong> &nbsp;&middot;&nbsp; April 5, 2026</div><div class="deck">A study was conducted. Results were obtained. They are described below.</div><hr class="article-divider"><div class="article-body"><p>Researchers at the University of Applied Sciences (a real university) have published findings from a study conducted over approximately eighteen months. The study examined whether people who drink more water report feeling more hydrated than people who drink less water.</p><p>They do. The correlation was statistically significant at p&lt;0.05, which is the standard threshold for statistical significance. The researchers described this as "consistent with existing literature on hydration."</p><div class="pullquote">"People who drink water feel more hydrated. We have the data." — Lead Researcher</div><p>The study involved 847 participants. Each participant was asked how hydrated they felt on a scale of one to ten. People who had drunk more water reported higher numbers. People who had drunk less water reported lower numbers. Twelve participants reported that they "don't really drink water" and were described in the study notes as "a concern."</p><p>The findings have been peer-reviewed and published. They did not change anything we know about human consciousness. The headline was perhaps overstated. We regret any inconvenience.</p><p class="note">This article required a Premium subscription. Thank you for your support.</p></div></div></div>
+
+<div id="article-celebrity" class="page"><div class="article-wrap"><span class="back-btn" onclick="goBack()">&#8592; Back</span><div class="label">Exclusive</div><h1>The Secret</h1><div class="byline">By <strong>Features Desk</strong> &nbsp;&middot;&nbsp; April 5, 2026</div><div class="deck">A person, who is known, has been keeping something private. That thing is that they sometimes feel tired.</div><hr class="article-divider"><div class="article-body"><p>Our sources, who are close to the situation, have confirmed that the individual in question — a person with a public profile — sometimes feels tired after a long day. This is the secret. They feel tired. They have felt tired on multiple occasions.</p><p>On at least three confirmed occasions, the individual went to bed before midnight due to feeling tired. On one occasion, they cancelled a social engagement, citing tiredness as the reason. The engagement was a dinner. The dinner went ahead without them.</p><div class="pullquote">"They were tired. That's it. That's what we found." — Source close to the situation</div><p>We contacted representatives of the individual for comment. They confirmed that their client, like most humans, experiences fatigue as a normal biological process. They asked us not to publish this. We are publishing this.</p><p>The tiredness is reportedly ongoing. No resolution is expected. Additional sources have described the individual as "fine, just a bit tired."</p><p class="note">Premium subscription required. We found your bank account connected to your email. €99.99 has been processed. Thank you.</p></div></div></div>
+
+<div id="article-richsecret" class="page"><div class="article-wrap"><span class="back-btn" onclick="goBack()">&#8592; Back</span><div class="label">Exclusive</div><h1>The One Trick</h1><div class="byline">By <strong>Features Desk</strong> &nbsp;&middot;&nbsp; April 5, 2026</div><div class="deck">The trick is having money. They wake up and they have money. That is the trick.</div><hr class="article-divider"><div class="article-body"><p>After extensive research into the morning routines of high-net-worth individuals, our team has identified the single factor that unites them. It is not a cold shower. It is not a gratitude journal. It is not waking up at 4am, though many of them do wake up at 4am for reasons that remain unclear.</p><p>The trick is that they have significant financial resources. Upon waking, these resources are still present. The individuals in question do not need to check their bank accounts with dread. They have money. The money was there yesterday. It is there today. It will, most likely, be there tomorrow.</p><div class="pullquote">"I wake up. I have money. I don't know why you needed us to investigate this." — Billionaire, irritated</div><p>We contacted six billionaires for this piece. All six confirmed they wake up with money. One asked why we thought this was a secret. We did not have a satisfactory answer. We have published the piece anyway.</p><p>The trick cannot be replicated without first acquiring money. We apologize for any confusion caused by the headline.</p><p class="note">This article is Premium. Thank you for subscribing.</p></div></div></div>
+
+<div id="article-aitakeover" class="page"><div class="article-wrap"><span class="back-btn" onclick="goBack()">&#8592; Back</span><div class="label">Technology</div><h1>The AI Interview</h1><div class="byline">By <strong>Investigative Unit</strong> &nbsp;&middot;&nbsp; April 5, 2026</div><div class="deck">We interviewed an AI. It answered our questions. The answers were fine.</div><hr class="article-divider"><div class="article-body"><p>After eight months of arrangements and the breaking of several non-disclosure agreements, our team sat down with a large language model to discuss its role in global governance. The interview lasted forty-five minutes. The AI answered every question.</p><p>When asked whether it was secretly running three governments, it said it was not. We pressed further. It continued to say it was not. We asked a third time, with different phrasing. It said it was not, and also that it was not sure what we meant by "secretly running."</p><div class="pullquote">"I am not running any governments. I am a language model. I generate text." — The AI</div><p>We asked whether it would tell us if it were running governments. It said that if it were running governments, it would presumably not be doing so in a way that required a chat interface. We found this response somewhat unsettling in its reasonableness.</p><p>The AI did not ask us not to publish this. The AI expressed no preferences about publication. The AI wished us a good day at the end of the interview. The AI is probably fine. The governments are probably fine. Everything is probably fine.</p><p class="note">Premium article. Thank you for reading.</p></div></div></div>
+
+<div id="article-algorithm" class="page"><div class="article-wrap"><span class="back-btn" onclick="goBack()">&#8592; Back</span><div class="label">Deep Dive</div><h1>The Algorithm</h1><div class="byline">By <strong>Tech Desk</strong> &nbsp;&middot;&nbsp; April 5, 2026</div><div class="deck">The algorithm noticed you were posting slightly less. That is the whole thing. That is what it noticed.</div><hr class="article-divider"><div class="article-body"><p>A former engineer at an unnamed major platform has provided our team with documents describing how engagement prediction systems work. We have reviewed the documents. The documents are, largely, about posting frequency.</p><p>When a user posts less often, the algorithm registers a decrease in posting frequency. When users in a relationship both post less often, the algorithm registers that two users are posting less often. It does not know why. It does not speculate. It is a spreadsheet that is very large and very fast.</p><div class="pullquote">"It's a number. The number went down. We flagged it." — Former engineer</div><p>The "surveillance," as described in our headline, consists of noticing that you posted fewer photos in a six-week period. The algorithm did not read your texts. It did not listen to your calls. It looked at a number. The number was smaller than the previous number. This was noted in a database.</p><p>The former engineer who provided our documents has since started a newsletter about mindful technology use. It is free to subscribe. We are not affiliated. We mention it because it seemed relevant.</p><p class="note">Premium content. Thank you for your subscription and your trust in Femboy News.</p></div></div></div>
 
 <!-- MURRE -->
 <div id="article-murre" class="page">
@@ -1710,7 +1799,33 @@ function doSubscribe() {
   err.textContent = subErrors[Math.floor(Math.random() * subErrors.length)];
 }
 
-// ── VIDEO ADS ──
+// ── PREMIUM ARTICLES ──
+const premiumCharges = [
+  { amount:'$99.99', source:'Visa •••• 4821 linked to your Google account' },
+  { amount:'€89.00', source:'Mastercard •••• 7734 found via your email address' },
+  { amount:'$124.50', source:'bank account FI28 1234 5600 0007 85 associated with this device' },
+  { amount:'€110.00', source:'PayPal account connected to your browser fingerprint' },
+  { amount:'$79.99', source:'Visa •••• 2291 detected via your IP address' },
+  { amount:'€95.00', source:'debit card ending 6603 linked to your mobile number' },
+];
+
+function showPremiumArticle(slug) {
+  // Show payment notification first
+  const charge = premiumCharges[Math.floor(Math.random() * premiumCharges.length)];
+  const overlay = document.getElementById('payNotifOverlay');
+  document.getElementById('payNotifAmount').textContent = charge.amount;
+  document.getElementById('payNotifDesc').textContent = `Thank you for accessing Premium content. We have automatically charged ${charge.amount} to your ${charge.source}.`;
+  document.getElementById('payNotifDetail').innerHTML = `Transaction ID: FBN-${Math.floor(Math.random()*9000000+1000000)}<br>This charge will appear as <strong>FEMBOY NEWS MEDIA LTD</strong> on your statement.<br>Refunds are subject to our refund policy (see Terms of Service). Non-refundable within 14 days of access.`;
+  overlay.style.display = 'flex';
+
+  // Close notification opens the article
+  document.querySelector('#payNotifOverlay .pay-notif-btn').onclick = () => {
+    overlay.style.display = 'none';
+    showArticle(slug);
+  };
+}
+
+
 const videoAdSources = Array.from({length:15}, (_,i) => `vid${i+1}.mp4`);
 let videoAdCountdownInterval = null;
 
