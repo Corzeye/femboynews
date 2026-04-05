@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Femboy News</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Source Serif 4', Georgia, serif; background: #faf8f2; color: #1a1a1a; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+
+  .header { background: #fff; border-bottom: 3px solid #1a1a1a; padding: 0 2rem; position: sticky; top: 0; z-index: 100; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #ccc; font-size: 11px; color: #555; letter-spacing: 0.05em; text-transform: uppercase; }
+  .masthead { text-align: center; padding: 1.2rem 0 0.8rem; }
+  .masthead h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2.2rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: #1a1a1a; }
+  .masthead .tagline { font-style: italic; font-size: 12px; color: #666; margin-top: 0.3rem; }
+  .nav { display: flex; justify-content: center; border-top: 1px solid #ccc; margin-top: 0.6rem; overflow-x: auto; }
+  .nav a { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.5rem 0.9rem; color: #1a1a1a; border-right: 1px solid #ccc; white-space: nowrap; font-weight: 600; cursor: pointer; }
+  .nav a:first-child { border-left: 1px solid #ccc; }
+  .nav a:hover { background: #f0ede4; }
+  .nav a.active { background: #1a1a1a; color: #faf8f2; }
+
+  .breaking { background: #c0392b; color: white; padding: 0.35rem 1.5rem; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; display: flex; align-items: center; gap: 1rem; overflow: hidden; }
+  .breaking-label { background: white; color: #c0392b; padding: 2px 8px; font-weight: 700; font-size: 10px; flex-shrink: 0; border-radius: 2px; }
+  .ticker-wrap { overflow: hidden; flex: 1; }
+  .ticker { display: inline-block; white-space: nowrap; animation: ticker 35s linear infinite; }
+  @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .main-grid { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; display: grid; grid-template-columns: 1fr 1px 320px; }
+  .divider-v { background: #ccc; margin: 0 1.5rem; }
+  .lead-story { padding-right: 1.5rem; }
+  .label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #c0392b; font-weight: 700; margin-bottom: 0.4rem; }
+  .lead-story h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 4vw, 2.7rem); line-height: 1.1; margin-bottom: 0.6rem; }
+  .deck { font-size: 15px; line-height: 1.6; color: #333; font-style: italic; margin-bottom: 1rem; border-left: 3px solid #c0392b; padding-left: 0.75rem; }
+  .body-text { font-size: 14px; line-height: 1.8; color: #444; columns: 2; column-gap: 1.5rem; }
+  .body-text p { margin-bottom: 0.75rem; break-inside: avoid; }
+  .byline { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: #888; margin-bottom: 0.9rem; }
+  .byline strong { color: #1a1a1a; font-weight: 600; }
+  .pullquote { border-top: 2px solid #1a1a1a; border-bottom: 2px solid #1a1a1a; padding: 0.7rem 0; margin: 1rem 0; font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; line-height: 1.4; text-align: center; break-inside: avoid; column-span: all; }
+  .sidebar { padding-left: 1.5rem; }
+  .sidebar-story { padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #e0ddd5; cursor: pointer; }
+  .sidebar-story:hover h3 { text-decoration: underline; }
+  .sidebar-story h3 { font-family: 'Playfair Display', serif; font-size: 1rem; line-height: 1.25; margin-bottom: 0.25rem; }
+  .sidebar-story p { font-size: 12px; line-height: 1.55; color: #555; }
+  .ad-box { background: #f0ede4; border: 1px dashed #bbb; text-align: center; padding: 1rem; margin-top: 1.2rem; font-size: 10px; color: #aaa; letter-spacing: 0.05em; text-transform: uppercase; }
+  .bottom-row { max-width: 1100px; margin: 0 auto 2.5rem; padding: 0 1rem; border-top: 3px solid #1a1a1a; padding-top: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .bottom-story h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; line-height: 1.25; margin: 0.25rem 0 0.35rem; cursor: pointer; }
+  .bottom-story h3:hover { text-decoration: underline; }
+  .bottom-story p { font-size: 12px; line-height: 1.6; color: #555; }
+
+  .section-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .section-head { border-bottom: 3px solid #1a1a1a; margin-bottom: 1.75rem; padding-bottom: 0.6rem; }
+  .section-head h2 { font-family: 'Playfair Display', serif; font-size: 2rem; }
+  .section-head p { font-style: italic; font-size: 13px; color: #666; margin-top: 0.25rem; }
+  .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem 2rem; }
+  .news-card { border-bottom: 1px solid #e0ddd5; padding-bottom: 1.2rem; cursor: pointer; }
+  .news-card:hover h3 { text-decoration: underline; }
+  .news-card h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; line-height: 1.25; margin: 0.25rem 0 0.35rem; }
+  .news-card p { font-size: 12.5px; line-height: 1.6; color: #555; }
+  .news-card .byline { margin-top: 0.4rem; margin-bottom: 0; }
+
+  .article-wrap { max-width: 700px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .back-btn { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #c0392b; font-weight: 700; margin-bottom: 1.5rem; cursor: pointer; border-bottom: 1px solid #c0392b; padding-bottom: 2px; }
+  .back-btn:hover { opacity: 0.7; }
+  .article-wrap h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 5vw, 2.8rem); line-height: 1.1; margin-bottom: 0.9rem; }
+  .article-divider { border: none; border-top: 1px solid #ccc; margin: 1.75rem 0; }
+  .article-body { font-size: 16px; line-height: 1.85; color: #333; }
+  .article-body p { margin-bottom: 1.1rem; }
+  .article-body h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin: 1.75rem 0 0.65rem; }
+  .article-body .pullquote { margin: 1.75rem 0; font-size: 1.15rem; column-span: none; }
+  .article-body .note { font-size: 12px; color: #888; font-style: italic; }
+
+  /* SECRET */
+  .secret-wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .lock-screen { text-align: center; padding: 5rem 1rem; }
+  .lock-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.25; }
+  .lock-screen h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .lock-screen p { font-size: 13px; color: #888; font-style: italic; margin-bottom: 1.5rem; }
+  .lock-input { border: 0.5px solid #ccc; background: #fff; padding: 0.5rem 1rem; font-family: inherit; font-size: 14px; border-radius: 4px; width: 180px; text-align: center; letter-spacing: 0.2em; display: block; margin: 0 auto 0.75rem; }
+  .lock-input:focus { outline: none; border-color: #1a1a1a; }
+  .lock-btn { background: #1a1a1a; color: #faf8f2; border: none; padding: 0.5rem 1.5rem; font-family: inherit; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; border-radius: 2px; }
+  .lock-btn:hover { background: #c0392b; }
+  .lock-wrong { color: #c0392b; font-size: 12px; margin-top: 0.5rem; visibility: hidden; }
+  .secret-head { text-align: center; padding: 1.5rem 0 2rem; border-bottom: 1px dashed #ccc; margin-bottom: 2rem; }
+  .secret-head h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.4rem; }
+  .secret-head p { font-size: 13px; color: #888; font-style: italic; }
+  .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+  .media-card { background: #fff; border: 0.5px solid #ddd; border-radius: 8px; overflow: hidden; }
+  .mc-body { padding: 0.75rem 1rem; }
+  .mc-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: #1a1a1a; margin-bottom: 0.2rem; }
+  .mc-desc { font-size: 11px; color: #999; }
+  .media-container { background: #111; min-height: 160px; display: flex; align-items: center; justify-content: center; }
+  .media-container img { width: 100%; max-height: 260px; object-fit: contain; display: block; }
+  .media-container video { width: 100%; max-height: 260px; display: block; }
+  .empty-slot { background: #f5f3ed; border: 1px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; gap: 0.5rem; color: #bbb; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  @media (max-width: 700px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .divider-v { display: none; }
+    .lead-story { padding-right: 0; }
+    .sidebar { padding-left: 0; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #ccc; }
+    .bottom-row, .news-grid { grid-template-columns: 1fr; }
+    .body-text { columns: 1; }
+    .header-top { flex-direction: column; gap: 3px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <span>Sunday, April 5, 2026</span>
+    <span>Price: Free (like your spirit)</span>
+    <span>Vol. XLII &nbsp;|&nbsp; No. 144</span>
+  </div>
+  <div class="masthead">
+    <h1>Femboy News</h1>
+    <div class="tagline">"All the news that fits in the hallway" &mdash; Reliable journalism since 2024</div>
+  </div>
+  <nav class="nav">
+    <a onclick="showPage('front')" id="nav-front" class="active">Home</a>
+    <a onclick="showPage('general')" id="nav-general">News</a>
+    <a onclick="showPage('fashion')" id="nav-fashion">Fashion</a>
+    <a onclick="showPage('furry')" id="nav-furry">Furry</a>
+    <a onclick="showPage('lgbtq')" id="nav-lgbtq">LGBTQ+</a>
+    <a onclick="showPage('linguistics')" id="nav-linguistics">Linguistics</a>
+    <a onclick="showPage('culture')" id="nav-culture">Culture</a>
+    <a onclick="showPage('secret')" id="nav-secret">&#x2022; &#x2022; &#x2022;</a>
+  </nav>
+</header>
+
+<div class="breaking">
+  <span class="breaking-label">Breaking</span>
+  <div class="ticker-wrap">
+    <span class="ticker">Local man explains why crocs with socks is "an aesthetically bold choice" for the fourth time this week &nbsp;&bull;&nbsp; Study: 94% of leggings improved by adding oversized hoodie &nbsp;&bull;&nbsp; Fursuit budget exceeds rent for third consecutive month &nbsp;&bull;&nbsp; Linguist warns: dialect and standard language are not the same thing &nbsp;&bull;&nbsp; Nail polish sector surges: demand up 300% &nbsp;&bull;&nbsp; Local trans person got tired of waiting and "just did it" &nbsp;&bull;&nbsp; Discord server at 3am: everything is fine, this is fine &nbsp;&bull;&nbsp; Content creator to release project "soon" (month 4)</span>
+  </div>
+</div>
+
+<!-- FRONT -->
+<div id="front" class="page active">
+  <main class="main-grid">
+    <article class="lead-story">
+      <div class="label">Top Story</div>
+      <h2>Local Person Claims to Be "Just Chill" About Their Appearance While Clearly Dressing With Extreme Precision</h2>
+      <div class="byline">By <strong>Staff Writer Mia Lawson</strong> &nbsp;&middot;&nbsp; Today, 9:14 AM</div>
+      <div class="deck">People close to the individual have been watching the situation unfold for weeks. "They say they don't care about how they look, but there are four coordinated layers happening right now," one friend said anonymously.</div>
+      <div class="body-text">
+        <p>A local person, 16, has once again assured their inner circle that they are "totally casual" about their appearance — at the same time that they spent 45 minutes selecting a nail polish combination in natural light.</p>
+        <p>Witnesses report seeing the individual compare two nearly identical shades of pink before making a final decision. "They said it was a quick choice," one eyewitness recounted.</p>
+        <div class="pullquote">"It's not a performance. It's a lifestyle. A coincidentally coordinated lifestyle."</div>
+        <p>Experts agree that the phenomenon is spreading. Similar cases have been reported across Discord servers, where users claim to be sharing photos "by accident" while clearly having found their best lighting angle first.</p>
+        <p>The individual declined to comment but later sent the reporter three images of the same outfit with the note "just to be clear."</p>
+      </div>
+    </article>
+    <div class="divider-v"></div>
+    <aside class="sidebar">
+      <article class="sidebar-story" onclick="showArticle('murre')">
+        <div class="label">Linguistics &bull; Analysis</div>
+        <h3>Dialect doesn't make a word correct &mdash; why "kaakau" doesn't beat "kaakao"</h3>
+        <p>A claim that keeps circulating online: that your home dialect makes a word the "right" one. Linguists disagree.</p>
+        <div class="byline">By <strong>K. Mackenzie</strong></div>
+      </article>
+      <article class="sidebar-story" onclick="showPage('furry')">
+        <div class="label">Furry</div>
+        <h3>Fursuit budget exceeds rent &mdash; owner does not see a problem</h3>
+        <p>"It's an investment," the individual explains, quietly petting the suit's ear.</p>
+        <div class="byline">By <strong>P. Johnson</strong></div>
+      </article>
+      <article class="sidebar-story" onclick="showPage('lgbtq')">
+        <div class="label">LGBTQ+</div>
+        <h3>Trans person got tired of waiting and came out on their own terms</h3>
+        <p>Government waitlists didn't slow them down: "I just did it myself. Works great."</p>
+        <div class="byline">By <strong>A. Vincent</strong></div>
+      </article>
+      <article class="sidebar-story" onclick="showPage('fashion')">
+        <div class="label">Fashion</div>
+        <h3>Oversized hoodie declared "national garment" in unofficial poll</h3>
+        <p>47 people voted on one subreddit. The result was "undeniable," organizers say.</p>
+        <div class="byline">By <strong>T. Hamilton</strong></div>
+      </article>
+      <div class="ad-box">Advertisement &mdash; Cloud Sock Shop<br><span style="font-size:9px">Finland's best selection</span></div>
+    </aside>
+  </main>
+  <section class="bottom-row">
+    <article class="bottom-story">
+      <div class="label">Culture</div>
+      <h3 onclick="showPage('culture')">Discord server enters crisis as #general becomes existential philosophy channel for third night running</h3>
+      <p>Originally created for memes, the channel has been full of 3am identity reflections since Tuesday. The server owner is asleep.</p>
+    </article>
+    <article class="bottom-story">
+      <div class="label">Opinion</div>
+      <h3 onclick="showArticle('murre')">"Kaakau is correct because I say so" &mdash; a rebuttal nobody requested</h3>
+      <p>Guest column: I have considered this carefully and my position is based on science, namely how words feel in my mouth. Here are three points.</p>
+    </article>
+    <article class="bottom-story">
+      <div class="label">Technology</div>
+      <h3>Local content creator will publish new project "soon" &mdash; as they have said for three months</h3>
+      <p>Those close to the situation remain cautiously optimistic. "They have a vision," one commenter wrote. "The vision still needs polish." No release date confirmed.</p>
+    </article>
+  </section>
+</div>
+
+<!-- GENERAL NEWS -->
+<div id="general" class="page">
+  <div class="section-wrap">
+    <div class="section-head"><h2>News</h2><p>Reliable, unverified, and mostly harmless</p></div>
+    <div class="news-grid">
+      <article class="news-card">
+        <div class="label">Local</div>
+        <h3>Man Spends Four Hours Reorganizing Playlist Instead of Doing Anything He Said He Would</h3>
+        <p>Sources confirm the playlist is now "perfect" and every original task remains untouched. The man described the afternoon as "productive."</p>
+        <div class="byline">By <strong>Staff</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Science</div>
+        <h3>Study Confirms That Replying "lol" to a Long Heartfelt Message Is Still Happening in 2026</h3>
+        <p>Researchers at an imaginary university found the behavior shows no signs of slowing. Victims have formed support groups.</p>
+        <div class="byline">By <strong>Dr. E. Marsh</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Economy</div>
+        <h3>Local Person Checks Bank Account, Closes App Immediately, Does Not Discuss It</h3>
+        <p>The individual confirmed they are "fine" and "not thinking about it" and would like to talk about something else. Economists are monitoring the situation.</p>
+        <div class="byline">By <strong>Financial Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Technology</div>
+        <h3>Person Opens 47 Browser Tabs "Just to Read Later." Has Not Read Any.</h3>
+        <p>The tabs, opened over six weeks, cover topics from tax basics to "you need to hear this." The browser crashes every Sunday.</p>
+        <div class="byline">By <strong>T. Webb</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Health</div>
+        <h3>Individual Describes Sleep Schedule as "a Little Chaotic" in What Experts Call Extreme Understatement</h3>
+        <p>The person, who went to sleep at 5am and calls this "basically evening," reports functioning well and does not appreciate unsolicited feedback.</p>
+        <div class="byline">By <strong>Health Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Weather</div>
+        <h3>It Is Too Hot and Also Too Cold and Nothing Is Comfortable: A Full Weather Report</h3>
+        <p>Our meteorological correspondent stood outside for ninety seconds before filing this report and returning indoors. We stand by the coverage.</p>
+        <div class="byline">By <strong>Weather Desk</strong></div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<!-- FASHION -->
+<div id="fashion" class="page">
+  <div class="section-wrap">
+    <div class="section-head"><h2>Fashion</h2><p>Looking good, allegedly on accident</p></div>
+    <div class="news-grid">
+      <article class="news-card">
+        <div class="label">Trend Report</div>
+        <h3>Oversized Hoodie Confirmed as Load-Bearing Garment in Most Outfits</h3>
+        <p>Fashion analysts report the oversized hoodie is not optional for a significant portion of the population — it is structural. Removing it collapses the entire look.</p>
+        <div class="byline">By <strong>Style Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Accessories</div>
+        <h3>Nail Polish "Quick Errand" Takes Three Hours and Returns With Six Shades</h3>
+        <p>What began as a trip for one specific color evolved into a full audit of the entire display. The individual returned with five additional bottles described as "necessary."</p>
+        <div class="byline">By <strong>M. Cole</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Footwear</div>
+        <h3>Crocs With Socks Movement Gains Ground Despite Everything</h3>
+        <p>Proponents argue it is "functionally perfect" and "aesthetically interesting." Critics have been told they simply don't understand the vision.</p>
+        <div class="byline">By <strong>Footwear Correspondent</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Profile</div>
+        <h3>Person Who Says They "Don't Really Do Fashion" Has Extremely Specific Consistent Aesthetic</h3>
+        <p>Close inspection reveals a sophisticated color palette, recurring silhouettes, and a clear philosophy. The person denies all of this.</p>
+        <div class="byline">By <strong>Staff</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Debate</div>
+        <h3>Skirt Over Trousers Trend Divides Nation; Nation Told to Get Over It</h3>
+        <p>The layered look, described by supporters as "obviously correct," continues to generate discourse. Editors of this publication have taken a firm stance in favor.</p>
+        <div class="byline">By <strong>Editorial Board</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Investigation</div>
+        <h3>Thrift Store Find Described as "One Euro" Actually Required Two Hours of Dedicated Bin Sorting</h3>
+        <p>The perfect vintage button-up cost one euro monetarily and approximately one hundred and twenty minutes of effort. The wearer considers this a deal.</p>
+        <div class="byline">By <strong>Investigative Team</strong></div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<!-- FURRY -->
+<div id="furry" class="page">
+  <div class="section-wrap">
+    <div class="section-head"><h2>Furry</h2><p>Community, craft, and extremely detailed ears</p></div>
+    <div class="news-grid">
+      <article class="news-card">
+        <div class="label">Finance</div>
+        <h3>Fursuit Budget Exceeds Rent for Third Consecutive Month; Owner Remains Unbothered</h3>
+        <p>"It's a long-term investment in my identity," the individual said, fluffing a tail that cost more than most people's laptops. Financial advisors were not consulted.</p>
+        <div class="byline">By <strong>P. Johnson</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Art</div>
+        <h3>Person Spends Six Months Designing Fursona, Immediately Wants to Redesign It</h3>
+        <p>The character has seventeen reference sheets, two height charts, and a lore document. The creator is already sketching alternatives. They describe this as "normal."</p>
+        <div class="byline">By <strong>Art Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Community</div>
+        <h3>Furry Convention Attendee Returns Home With Three New Friends and Zero Regrets</h3>
+        <p>The individual, who arrived alone and nervous, left with a group chat and two invitations to future events. They described the experience as "actually exactly what I needed."</p>
+        <div class="byline">By <strong>Community Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Opinion</div>
+        <h3>Yes, Having a Fursona Counts as Character Development. Experts Agree.</h3>
+        <p>Guest column: Designing a fursona requires difficult questions about who you are and what you value. This is philosophy. I have a PhD in this specifically.</p>
+        <div class="byline">By <strong>Dr. Fox McCloud (no relation)</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Arts</div>
+        <h3>Commission Finally Arrives After Eight Months; Artist and Client Both Cry a Little</h3>
+        <p>The artwork, described as "worth every second of the wait," was immediately set as profile picture across six platforms. Both parties are now best friends.</p>
+        <div class="byline">By <strong>Arts Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Profile</div>
+        <h3>Person Whose Fursona Is a Dragon Insists They Are "Not Like Other Dragon Furries"</h3>
+        <p>The dragon has rare dual-element abilities and an unusual scale pattern. The furry community has heard this before and extends a warm welcome regardless.</p>
+        <div class="byline">By <strong>Staff</strong></div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<!-- LGBTQ+ -->
+<div id="lgbtq" class="page">
+  <div class="section-wrap">
+    <div class="section-head"><h2>LGBTQ+</h2><p>News, stories, and the occasional unsolicited opinion</p></div>
+    <div class="news-grid">
+      <article class="news-card">
+        <div class="label">Coming Out</div>
+        <h3>Trans Person Got Tired of Waiting and Just Did It on Their Own Terms</h3>
+        <p>Citing waitlists and a general sense of "honestly why am I waiting," the individual moved forward independently. Results are described as "extremely good actually."</p>
+        <div class="byline">By <strong>A. Vincent</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Culture</div>
+        <h3>Person Discovers They Are Gay at 3am via a Single Vine Compilation. Scientists Baffled.</h3>
+        <p>The individual, who had "genuinely no idea" until that point, describes the realization as arriving "very suddenly and making a lot of things make sense retroactively."</p>
+        <div class="byline">By <strong>Culture Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Community</div>
+        <h3>Non-Binary Person Tired of Explaining the Concept, Creates Laminated FAQ Card</h3>
+        <p>Now in its fourth edition, the card answers twelve frequently asked questions. The individual reports a 60% reduction in exhausting conversations.</p>
+        <div class="byline">By <strong>Staff</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Opinion</div>
+        <h3>It Gets Better, Yes, But Also You Are Already Good Right Now. Just Saying.</h3>
+        <p>Guest column: We tell young queer people it gets better, which is true. But also: you are not a work in progress. You are already a person. I felt this needed to be said.</p>
+        <div class="byline">By <strong>Editorial Board</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Identity</div>
+        <h3>Person Spends Two Years Figuring Out Identity, Ends Up Somewhere Unexpected, Is Happy</h3>
+        <p>The journey involved significant research, several long conversations, and one very supportive mother. It concluded somewhere the individual describes as "actually just right."</p>
+        <div class="byline">By <strong>Features Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Clarification</div>
+        <h3>Bisexual Person Confirms They Are Still Bisexual After Two Years in a Relationship</h3>
+        <p>In a brief statement issued to no one who asked, the individual clarified their identity did not change when they started dating someone. "That is not how it works," they added.</p>
+        <div class="byline">By <strong>Clarifications Desk</strong></div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<!-- LINGUISTICS -->
+<div id="linguistics" class="page">
+  <div class="section-wrap">
+    <div class="section-head"><h2>Linguistics</h2><p>Words, dialects, and people who are wrong online</p></div>
+    <div class="news-grid">
+      <article class="news-card" onclick="showArticle('murre')">
+        <div class="label">Analysis &bull; Click to read</div>
+        <h3>Dialect Doesn't Make a Word Correct &mdash; Why "Kaakau" Doesn't Beat "Kaakao"</h3>
+        <p>A recurring online claim: your home dialect determines what is "right." Linguists have thoughts. Full analysis inside.</p>
+        <div class="byline">By <strong>K. Mackenzie</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Internet Language</div>
+        <h3>Researchers Confirm "lol" No Longer Means Laughing and Hasn't for About a Decade</h3>
+        <p>The word now functions as a tone softener, an acknowledgment, or a subtle distancing mechanism. Linguists are fascinated. Your parents are confused.</p>
+        <div class="byline">By <strong>Digital Language Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Slang</div>
+        <h3>Person Uses Word Learned Online; Native Speakers of That Language Are Surprised</h3>
+        <p>The individual, who picked up the term from a meme, deployed it with unexpected confidence. Reactions ranged from delight to mild alarm.</p>
+        <div class="byline">By <strong>Slang Correspondent</strong></div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<!-- CULTURE -->
+<div id="culture" class="page">
+  <div class="section-wrap">
+    <div class="section-head"><h2>Culture</h2><p>Art, internet, and things that happen at 3am</p></div>
+    <div class="news-grid">
+      <article class="news-card">
+        <div class="label">Internet</div>
+        <h3>Discord Server Enters Crisis as #general Becomes Existential Philosophy Channel for Third Night</h3>
+        <p>Originally for memes and game clips, the channel has been an unmoderated philosophy forum since Tuesday. The server owner is asleep.</p>
+        <div class="byline">By <strong>A. Vincent</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Gaming</div>
+        <h3>Local Player Wins Online Tournament, Refuses to Say Which Game</h3>
+        <p>"It's an indie game you haven't heard of," the competitor said. The trophy documentation is, per the winner, "existentially private."</p>
+        <div class="byline">By <strong>Gaming Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Game Dev</div>
+        <h3>Independent Developer Publishes Horror Game; It Is Genuinely Unsettling, Everyone Surprised</h3>
+        <p>Released quietly on itch.io, the game received feedback ranging from "actually scary" to "I had to stop playing at night." The developer considers this a success.</p>
+        <div class="byline">By <strong>Indie Games Correspondent</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Video</div>
+        <h3>Content Creator Spends Forty Hours on Edit That Will Be Watched in Fourteen Seconds</h3>
+        <p>The edit features frame-perfect transitions and color grading the creator calls "crucial." It received three comments. Two were positive. One was someone's uncle in all caps.</p>
+        <div class="byline">By <strong>Video Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Social</div>
+        <h3>Online Friendship Proves to Be as Real and Meaningful as Anyone Claimed It Would Be</h3>
+        <p>Two individuals who met through a shared server two years ago describe the relationship as one of the most significant in their lives. Skeptics have not acknowledged this.</p>
+        <div class="byline">By <strong>Features Desk</strong></div>
+      </article>
+      <article class="news-card">
+        <div class="label">Tech</div>
+        <h3>Person Builds Personal Website at Midnight, Considers This a Normal Activity</h3>
+        <p>The site includes a wiki, original lore, and what the creator calls "a whole thing," constructed over several consecutive late nights. It is, objectively, impressive.</p>
+        <div class="byline">By <strong>Tech Desk</strong></div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<!-- MURRE ARTICLE -->
+<div id="article-murre" class="page">
+  <div class="article-wrap">
+    <span class="back-btn" onclick="goBack()">&#8592; Back</span>
+    <div class="label">Linguistics &bull; Analysis</div>
+    <h1>Dialect Doesn't Make a Word Correct</h1>
+    <div class="byline">By <strong>K. Mackenzie</strong> &nbsp;&middot;&nbsp; April 5, 2026 &nbsp;&middot;&nbsp; Linguistics</div>
+    <div class="deck">The Finnish language has dozens of dialects. But the fact that a word belongs to your dialect doesn't make it "correct" in standard language &mdash; and calling people stupid for using the standard form is even more wrong.</div>
+    <hr class="article-divider">
+    <div class="article-body">
+      <p>The Finnish language has dozens of dialects, and every region has its own sounds, words, and structures. This is a richness, not a problem. But it easily leads to a misunderstanding: if a word sounds familiar in your own dialect, it automatically feels "right" — and other forms feel wrong. That's not how language works.</p>
+
+      <h2>Kaakau or kaakao?</h2>
+      <p>Take the word <em>kaakao</em> (cocoa). In some dialects — particularly certain South Karelian varieties — you'll hear the form <em>kaakau</em>, and to someone who grew up saying it, it feels completely natural. But feeling natural is not the same as being correct in standard language. The norm in Finnish standard language, the kind taught in schools and used in formal writing, is <em>kaakao</em>.</p>
+      <p>If someone claims <em>kaakau</em> is "right" and <em>kaakao</em> is wrong — and then calls other people stupid for using the standard form — they're confusing dialect with standard language. The worse part is the second bit: the calling people stupid.</p>
+
+      <div class="pullquote">"Speaking a dialect doesn't give you authority to decide what's correct for the whole language."</div>
+
+      <h2>Lätty or lettu?</h2>
+      <p>The same applies to <em>lätty</em> (pancake). It's a genuine dialect word and part of living language, but the standard Finnish form is <em>lettu</em>. <em>Lätty</em> isn't more correct just because it's someone's home dialect form. It's a different register — not better or worse, just different.</p>
+
+      <h2>Register is everything</h2>
+      <p>The key thing to understand is that dialect and standard language are different <em>registers</em> — different forms of language intended for different situations. Dialect is completely as valuable as standard language. But it doesn't replace it, and it's not above it.</p>
+      <p>There's no reason to call people stupid for using standard language forms. Those are, in fact, the forms that are taught and recommended. Your dialect is a great thing — but it's one perspective on the language, not the whole truth.</p>
+      <p>And if you want to argue that something is "right" or "wrong," it's worth checking first which you mean: dialect, or standard language. They're different things entirely.</p>
+
+      <hr class="article-divider">
+      <p class="note">Femboy News reminds readers that linguistics is a fascinating field and nobody needs to call anyone stupid over the word "lettu." Cocoa tastes good regardless of how you spell it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECRET PAGE -->
+<div id="secret" class="page">
+  <div id="lockScreen" class="lock-screen">
+    <div class="lock-icon">&#128274;</div>
+    <h3>Restricted Section</h3>
+    <p>You didn't see this tab. Enter the password to continue.</p>
+    <input type="password" class="lock-input" id="lockInput" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" onkeydown="if(event.key==='Enter')unlock()" />
+    <br>
+    <button class="lock-btn" onclick="unlock()">Enter</button>
+    <div class="lock-wrong" id="lockWrong">Wrong password. Try again.</div>
+  </div>
+
+  <div id="secretContent" class="secret-wrap" style="display:none;">
+    <div class="secret-head">
+      <h2>The Vault</h2>
+      <p>You found it. Good job. Don't tell anyone.</p>
+    </div>
+    <div class="media-grid">
+
+      <!-- Slot 1: gif -->
+      <div class="media-card">
+        <div class="media-container">
+          <img src="https://upload.garance.cat/cat/cherry.gif" alt="cherry" onerror="this.style.display='none'; this.parentElement.innerHTML+='<p style=\'color:#666;font-size:12px;padding:1rem;\'>Could not load media</p>'" />
+        </div>
+        <div class="mc-body">
+          <div class="mc-title">cherry.gif</div>
+          <div class="mc-desc">A classic. Probably fine.</div>
+        </div>
+      </div>
+
+      <!-- Slot 2: video — replace src with your link -->
+      <div class="media-card">
+        <div class="media-container">
+          <video controls style="width:100%;max-height:260px;display:block;">
+            <source src="YOUR_VIDEO_LINK_HERE" type="video/mp4" />
+            <!-- You can also try type="video/webm" or type="video/ogg" -->
+            Browser does not support video.
+          </video>
+        </div>
+        <div class="mc-body">
+          <div class="mc-title">Video slot</div>
+          <div class="mc-desc">Replace YOUR_VIDEO_LINK_HERE in the HTML with a direct video URL.</div>
+        </div>
+      </div>
+
+      <!-- Slot 3: another video slot -->
+      <div class="media-card">
+        <div class="media-container">
+          <video controls style="width:100%;max-height:260px;display:block;">
+            <source src="YOUR_VIDEO_LINK_HERE" type="video/mp4" />
+            Browser does not support video.
+          </video>
+        </div>
+        <div class="mc-body">
+          <div class="mc-title">Video slot</div>
+          <div class="mc-desc">Another slot for a direct video URL.</div>
+        </div>
+      </div>
+
+      <!-- Slot 4: empty -->
+      <div class="empty-slot">
+        <span style="font-size:1.5rem;">+</span>
+        <span>Empty slot</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  let lastPage = 'front';
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const navEl = document.getElementById('nav-' + id);
+    if (navEl) navEl.classList.add('active');
+    lastPage = id;
+    window.scrollTo(0, 0);
+  }
+
+  function showArticle(slug) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('article-' + slug).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function goBack() {
+    showPage(lastPage);
+  }
+
+  function unlock() {
+    const val = document.getElementById('lockInput').value;
+    // Change "femboy" to whatever password you want
+    if (val === 'femboy') {
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('secretContent').style.display = 'block';
+    } else {
+      document.getElementById('lockWrong').style.visibility = 'visible';
+      document.getElementById('lockInput').value = '';
+    }
+  }
+</script>
+</body>
+</html>
