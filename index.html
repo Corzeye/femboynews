@@ -305,15 +305,73 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
 .modal-box p { font-size:13px; color:#555; line-height:1.6; }
 .modal-sub { font-size:11px; color:#aaa; margin-top:.5rem; }
 
+/* ── VIDEO AD OVERLAY ── */
+.video-ad-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:9500; display:flex; align-items:center; justify-content:center; }
+.video-ad-box { position:relative; width:min(700px,92vw); background:#000; border-radius:6px; overflow:hidden; box-shadow:0 8px 50px rgba(0,0,0,.6); }
+.video-ad-box video { width:100%; display:block; max-height:60vh; object-fit:contain; }
+.video-ad-top { display:flex; justify-content:space-between; align-items:center; padding:.4rem .75rem; background:rgba(0,0,0,.65); position:absolute; top:0; left:0; right:0; z-index:2; }
+.video-ad-label { font-size:10px; color:#ccc; text-transform:uppercase; letter-spacing:.1em; font-family:Arial,sans-serif; }
+.video-ad-bottom { position:absolute; bottom:0; right:0; padding:.6rem .85rem; z-index:2; }
+.video-ad-skip-waiting { background:rgba(0,0,0,.7); color:#ccc; border:1px solid #555; padding:.45rem 1rem; font-size:12px; font-family:Arial,sans-serif; border-radius:3px; white-space:nowrap; pointer-events:none; }
+.video-ad-skip-btn { background:#1a1a1a; color:#fff; border:1px solid #888; padding:.45rem 1rem; font-size:13px; font-family:Arial,sans-serif; cursor:pointer; border-radius:3px; white-space:nowrap; display:none; }
+.video-ad-skip-btn:hover { background:#c0392b; border-color:#c0392b; }
+
+/* ── MOBILE ── */
 @media(max-width:700px){
-  .main-grid{grid-template-columns:1fr;}
-  .divider-v{display:none;}
-  .lead-story{padding-right:0;}
-  .sidebar{padding-left:0;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #ccc;}
-  .bottom-row,.news-grid,.team-grid{grid-template-columns:1fr;}
-  .body-text{columns:1;}
-  .header-top{flex-direction:column;gap:3px;text-align:center;}
-  .cookie-btns{flex-direction:column;}
+  /* header */
+  .header { padding:0 .75rem; }
+  .header-top { flex-direction:column; gap:2px; text-align:center; padding:.4rem 0; }
+  .masthead h1 { font-size:clamp(1.8rem,9vw,3rem); }
+  .masthead .tagline { font-size:10px; }
+  .masthead { padding:.8rem 0 .5rem; }
+  .nav { justify-content:flex-start; }
+  .nav a { font-size:10px; padding:.45rem .6rem; letter-spacing:.06em; }
+
+  /* front page */
+  .main-grid { padding:1rem .75rem; }
+  .lead-story { padding-right:0; }
+  .lead-story h2 { font-size:clamp(1.4rem,7vw,2rem); }
+  .deck { font-size:13px; }
+  .body-text { columns:1; font-size:13px; }
+  .pullquote { font-size:1rem; }
+  .bottom-row { grid-template-columns:1fr; padding:0 .75rem; gap:1rem; }
+  .bottom-story h3 { font-size:1rem; }
+
+  /* sections */
+  .news-grid { grid-template-columns:1fr; gap:1rem; }
+  .team-grid { grid-template-columns:1fr; }
+  .section-wrap { padding:1rem .75rem 3rem; }
+  .section-head h2 { font-size:1.5rem; }
+
+  /* article */
+  .article-wrap { padding:1rem .75rem 3rem; }
+  .article-wrap h1 { font-size:clamp(1.5rem,6vw,2rem); }
+  .article-body { font-size:15px; }
+
+  /* subscribe */
+  .sub-page { padding:1rem .75rem 3rem; }
+  .plan-grid { grid-template-columns:1fr; }
+  .sub-card-row { grid-template-columns:1fr 1fr; }
+
+  /* auth */
+  .auth-page { padding:1rem .75rem 3rem; }
+
+  /* cookie */
+  .cookie-btns { flex-direction:column; }
+  .cookie-box { padding:1rem; }
+
+  /* secret */
+  .media-grid { grid-template-columns:1fr; }
+  .lock-input { width:160px; }
+
+  /* popups */
+  .random-popup-box { width:95%; }
+  .float-ad { max-width:160px; }
+  .float-ad img { width:160px; height:160px; }
+
+  /* footer */
+  .footer .footer-links { flex-wrap:wrap; gap:.75rem; justify-content:center; }
+  .footer { padding:1.5rem .75rem; }
 }
 </style>
 </head>
@@ -468,6 +526,24 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
       <button class="random-popup-close" onclick="document.getElementById('randomPopup').style.display='none'">&#x2715;</button>
     </div>
     <div class="random-popup-body" id="randomPopupBody"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     VIDEO AD OVERLAY
+══════════════════════════════════════ -->
+<div class="video-ad-overlay" id="videoAdOverlay" style="display:none;">
+  <div class="video-ad-box">
+    <div class="video-ad-top">
+      <span class="video-ad-label">Advertisement</span>
+    </div>
+    <video id="videoAdPlayer" autoplay playsinline>
+      <source id="videoAdSource" src="" type="video/mp4">
+    </video>
+    <div class="video-ad-bottom">
+      <span class="video-ad-skip-waiting" id="videoAdWaiting">Skip in <strong id="videoAdCountdown">15</strong>s</span>
+      <button class="video-ad-skip-btn" id="videoAdSkipBtn" onclick="closeVideoAd()">Skip Ad ›</button>
+    </div>
   </div>
 </div>
 
@@ -1054,64 +1130,14 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
     </div>
     <div class="media-grid" id="mediaGrid">
 
+      <!-- Slot 1: example gif -->
       <div class="media-card">
         <div class="media-container">
-          <video controls style="width:100%;max-height:260px;display:block;">
-            <source src="https://static1.e621.net/data/06/19/0619ff5a8270aed7b22ca3981b783224.webm" type="video/webm" />
-          </video>
+          <img src="https://upload.garance.cat/cat/cherry.gif" alt="cherry" onerror="this.style.display='none';" />
         </div>
         <div class="mc-body">
-          <div class="mc-title">Zonkpunch Peak</div>
-          <div class="mc-desc">Very popular, but fucking peak nonetheless</div>
-        </div>
-      </div>
-
-      <div class="media-card">
-        <div class="media-container">
-          <video controls style="width:100%;max-height:260px;display:block;">
-            <source src="https://static1.e621.net/data/fb/35/fb35823b578b60d25c118d6bbffecce2.webm" type="video/webm" />
-          </video>
-        </div>
-        <div class="mc-body">
-          <div class="mc-title">Fluffydisk42 Peak</div>
-          <div class="mc-desc">Also quite popular, but also quite peak</div>
-        </div>
-      </div>
-
-      <div class="media-card">
-        <div class="media-container">
-          <video controls style="width:100%;max-height:260px;display:block;">
-            <source src="https://static1.e621.net/data/12/3c/123cb3ac3de44687868e2effd50c8954.mp4" type="video/webm" />
-          </video>
-        </div>
-        <div class="mc-body">
-          <div class="mc-title">Cheetah gets fucked in the ass (Peak)</div>
-          <div class="mc-desc">Just watch the video man idk how to describe this, other than it's fucking peak</div>
-        </div>
-      </div>
-
-
-      <div class="media-card">
-        <div class="media-container">
-          <video controls style="width:100%;max-height:260px;display:block;">
-            <source src="https://static1.e621.net/data/d1/62/d162e355b96b08920a08558c00dff843.webm" type="video/webm" />
-          </video>
-        </div>
-        <div class="mc-body">
-          <div class="mc-title">I'm running out of thigns to call these</div>
-          <div class="mc-desc">Slit play is peak idc what anyone says</div>
-        </div>
-      </div>
-
-      <div class="media-card">
-        <div class="media-container">
-          <video controls style="width:100%;max-height:260px;display:block;">
-            <source src="https://static1.e621.net/data/sample/0e/31/0e3162045155aea46990043eb5e1dc38_720p.mp4" type="video/webm" />
-          </video>
-        </div>
-        <div class="mc-body">
-          <div class="mc-title">Fortnite Battle Smash</div>
-          <div class="mc-desc">fortnite balls</div>
+          <div class="mc-title">cherry.gif</div>
+          <div class="mc-desc">A classic.</div>
         </div>
       </div>
 
@@ -1684,7 +1710,57 @@ function doSubscribe() {
   err.textContent = subErrors[Math.floor(Math.random() * subErrors.length)];
 }
 
+// ── VIDEO ADS ──
+const videoAdSources = Array.from({length:15}, (_,i) => `vid${i+1}.mp4`);
+let videoAdCountdownInterval = null;
+
+function showVideoAd() {
+  if (isOnSecretPage()) return;
+  const src = videoAdSources[Math.floor(Math.random() * videoAdSources.length)];
+  const skipDelay = Math.floor(Math.random() * 11) + 5; // 5–15s
+  const overlay = document.getElementById('videoAdOverlay');
+  const player = document.getElementById('videoAdPlayer');
+  const source = document.getElementById('videoAdSource');
+  const waiting = document.getElementById('videoAdWaiting');
+  const skipBtn = document.getElementById('videoAdSkipBtn');
+  const countdown = document.getElementById('videoAdCountdown');
+
+  source.src = src;
+  player.loop = true;
+  player.muted = false;
+  player.load();
+  player.play().catch(() => { player.muted = true; player.play(); });
+  waiting.style.display = 'inline-block';
+  skipBtn.style.display = 'none';
+  countdown.textContent = skipDelay;
+  overlay.style.display = 'flex';
+
+  clearInterval(videoAdCountdownInterval);
+  let secs = skipDelay;
+  videoAdCountdownInterval = setInterval(() => {
+    secs--;
+    countdown.textContent = secs;
+    if (secs <= 0) {
+      clearInterval(videoAdCountdownInterval);
+      waiting.style.display = 'none';
+      skipBtn.style.display = 'inline-block';
+    }
+  }, 1000);
+}
+
+function closeVideoAd() {
+  clearInterval(videoAdCountdownInterval);
+  const overlay = document.getElementById('videoAdOverlay');
+  const player = document.getElementById('videoAdPlayer');
+  player.pause();
+  player.loop = false;
+  overlay.style.display = 'none';
+}
+
 window.addEventListener('DOMContentLoaded', injectAds);
+// First video ad after 30s, then every 2.5 min
+setTimeout(() => { if (!isOnSecretPage()) showVideoAd(); }, 30 * 1000);
+setInterval(() => { if (!isOnSecretPage()) showVideoAd(); }, 2.5 * 60 * 1000);
 </script>
 </body>
 </html>
