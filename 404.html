@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+// Redirect all 404s back to index.html with the path as a query param
+var path = window.location.pathname;
+window.location.replace('/?p=' + encodeURIComponent(path));
+</script>
+</head>
+<body></body>
+</html>

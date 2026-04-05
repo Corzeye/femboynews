@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Femboy News — Reliable Journalism Since 2024</title>
+<script>
+// GitHub Pages SPA redirect: 404.html redirects here with ?p=/path
+(function() {
+  const q = window.location.search;
+  if (q.startsWith('?p=')) {
+    const path = decodeURIComponent(q.slice(3));
+    history.replaceState(null, '', path);
+  }
+})();
+</script>
 <link rel="icon" type="image/png" href="ads/image1.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
@@ -1513,11 +1523,31 @@ function goStep(n) {
 function acceptAll() { document.getElementById('cookieOverlay').style.display = 'none'; }
 function closeCookies() { document.getElementById('cookieOverlay').style.display = 'none'; }
 
+// ── ROUTING ──
+const PAGE_TO_PATH = {
+  front: '/',
+  general: '/news',
+  fashion: '/fashion',
+  furry: '/furry',
+  lgbtq: '/lgbtq',
+  linguistics: '/linguistics',
+  culture: '/culture',
+  secret: '/peak',
+  subscribe: '/subscribe',
+  login: '/login',
+  signup: '/signup',
+  about: '/about',
+};
+const PATH_TO_PAGE = Object.fromEntries(Object.entries(PAGE_TO_PATH).map(([k,v]) => [v,k]));
+
+function pathForArticle(slug) { return '/article/' + slug; }
+
 // ── NAVIGATION ──
-function showPage(id) {
+function showPage(id, pushState = true) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
   const navEl = document.getElementById('nav-' + id);
   if (navEl) navEl.classList.add('active');
   if (id === 'secret') {
@@ -1532,20 +1562,49 @@ function showPage(id) {
   if (!id.startsWith('article-') && id !== 'login' && id !== 'signup' && id !== 'about') {
     lastPage = id;
   }
+  if (pushState) {
+    const path = PAGE_TO_PATH[id] || '/';
+    history.pushState({ id }, '', path);
+  }
   window.scrollTo(0, 0);
 }
 
-function showArticle(slug) {
+function showArticle(slug, pushState = true) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
   const el = document.getElementById('article-' + slug);
   if (el) el.classList.add('active');
+  if (pushState) history.pushState({ slug }, '', pathForArticle(slug));
   window.scrollTo(0, 0);
 }
 
 function goBack() {
   showPage(lastPage);
 }
+
+// Handle browser back/forward
+window.addEventListener('popstate', (e) => {
+  const path = location.pathname;
+  if (path.startsWith('/article/')) {
+    const slug = path.replace('/article/', '');
+    showArticle(slug, false);
+  } else {
+    const id = PATH_TO_PAGE[path] || 'front';
+    showPage(id, false);
+  }
+});
+
+// On load, route to the correct page based on URL
+(function initRoute() {
+  const path = location.pathname;
+  if (path.startsWith('/article/')) {
+    const slug = path.replace('/article/', '');
+    const el = document.getElementById('article-' + slug);
+    if (el) { showArticle(slug, false); return; }
+  }
+  const id = PATH_TO_PAGE[path] || 'front';
+  showPage(id, false);
+})();
 
 // ── SECRET ──
 function confirmAge() {
