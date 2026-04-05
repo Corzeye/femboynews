@@ -332,14 +332,14 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
 .modal-sub { font-size:11px; color:#aaa; margin-top:.5rem; }
 
 /* ── VIDEO AD OVERLAY ── */
-.video-ad-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:9500; display:flex; align-items:center; justify-content:center; }
-.video-ad-box { position:relative; width:min(700px,92vw); background:#000; border-radius:6px; overflow:hidden; box-shadow:0 8px 50px rgba(0,0,0,.6); }
+.video-ad-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:9500; display:flex; align-items:center; justify-content:center; pointer-events:all; }
+.video-ad-box { position:relative; width:min(700px,92vw); background:#000; border-radius:6px; overflow:hidden; box-shadow:0 8px 50px rgba(0,0,0,.6); pointer-events:all; }
 .video-ad-box video { width:100%; display:block; max-height:60vh; object-fit:contain; pointer-events:none; }
-.video-ad-top { display:flex; justify-content:space-between; align-items:center; padding:.4rem .75rem; background:rgba(0,0,0,.65); position:absolute; top:0; left:0; right:0; z-index:2; }
+.video-ad-top { display:flex; justify-content:space-between; align-items:center; padding:.4rem .75rem; background:rgba(0,0,0,.65); position:absolute; top:0; left:0; right:0; z-index:2; pointer-events:none; }
 .video-ad-label { font-size:10px; color:#ccc; text-transform:uppercase; letter-spacing:.1em; font-family:Arial,sans-serif; }
 .video-ad-bottom { position:absolute; bottom:0; right:0; padding:.6rem .85rem; z-index:10; pointer-events:all; }
-.video-ad-skip-waiting { background:rgba(0,0,0,.7); color:#ccc; border:1px solid #555; padding:.45rem 1rem; font-size:12px; font-family:Arial,sans-serif; border-radius:3px; white-space:nowrap; pointer-events:none; display:inline-block; }
-.video-ad-skip-btn { background:#1a1a1a; color:#fff; border:1px solid #888; padding:.45rem 1rem; font-size:13px; font-family:Arial,sans-serif; cursor:pointer; border-radius:3px; white-space:nowrap; display:none; position:relative; z-index:11; }
+.video-ad-skip-waiting { background:rgba(0,0,0,.7); color:#ccc; border:1px solid #555; padding:.45rem 1rem; font-size:12px; font-family:Arial,sans-serif; border-radius:3px; white-space:nowrap; display:inline-block; pointer-events:none; }
+.video-ad-skip-btn { background:#1a1a1a; color:#fff; border:2px solid #fff; padding:.5rem 1.2rem; font-size:13px; font-family:Arial,sans-serif; cursor:pointer; border-radius:3px; white-space:nowrap; display:none; position:relative; z-index:11; pointer-events:all; }
 .video-ad-skip-btn:hover { background:#c0392b; border-color:#c0392b; }
 
 /* ── MOBILE ── */
@@ -568,7 +568,7 @@ a { color:inherit; text-decoration:none; cursor:pointer; }
     </video>
     <div class="video-ad-bottom">
       <span class="video-ad-skip-waiting" id="videoAdWaiting">Skip in <strong id="videoAdCountdown">15</strong>s</span>
-      <button class="video-ad-skip-btn" id="videoAdSkipBtn" onclick="closeVideoAd()">Skip Ad ›</button>
+      <button class="video-ad-skip-btn" id="videoAdSkipBtn">Skip Ad ›</button>
     </div>
   </div>
 </div>
@@ -1729,31 +1729,27 @@ function isOnSecretPage() {
 
 function spawnFloatingAd() {
   if (isOnSecretPage()) return;
-  // remove old ones first
   document.querySelectorAll('.float-ad').forEach(el => el.remove());
 
   const src = imageAds[Math.floor(Math.random() * imageAds.length)];
   const link = 'https://youtube.com/watch?v=dQw4w9WgXcQ';
 
-  const margin = 20;
-  const adSize = 204; // 200px + borders
-  const maxX = window.innerWidth - adSize - margin;
-  const maxY = window.innerHeight - adSize - margin;
-  const x = Math.floor(Math.random() * Math.max(maxX, margin)) + margin;
-  const y = Math.floor(Math.random() * Math.max(maxY, margin)) + margin;
+  const adW = 200, adH = 230; // width + label height
+  const margin = 16;
+  const maxX = Math.max(margin, window.innerWidth - adW - margin);
+  const maxY = Math.max(margin, window.innerHeight - adH - margin);
+  const x = Math.floor(Math.random() * maxX);
+  const y = Math.floor(Math.random() * maxY) + margin;
 
   const div = document.createElement('div');
   div.className = 'float-ad';
-  div.style.left = x + 'px';
-  div.style.top = y + 'px';
+  div.style.cssText = `left:${x}px;top:${y}px;`;
   div.innerHTML = `
     <button class="float-ad-close" onclick="event.stopPropagation();this.parentElement.remove()">✕</button>
     <img src="${src}" alt="Advertisement" onclick="window.open('${link}','_blank')" />
     <div class="float-ad-label">Advertisement</div>
   `;
   document.body.appendChild(div);
-
-  // auto-remove after 12s
   setTimeout(() => { if (div.parentElement) div.remove(); }, 12000);
 }
 
@@ -1888,24 +1884,44 @@ function showPremiumArticle(slug) {
 const videoAdSources = Array.from({length:15}, (_,i) => `vid${i+1}.mp4`);
 let videoAdCountdownInterval = null;
 
+function closeVideoAd() {
+  clearInterval(videoAdCountdownInterval);
+  videoAdCountdownInterval = null;
+  const overlay = document.getElementById('videoAdOverlay');
+  const player = document.getElementById('videoAdPlayer');
+  player.pause();
+  player.loop = false;
+  overlay.style.display = 'none';
+}
+
 function showVideoAd() {
   if (isOnSecretPage()) return;
+
+  // If already showing, don't stack
+  const overlay = document.getElementById('videoAdOverlay');
+  if (overlay.style.display === 'flex') return;
+
   const src = videoAdSources[Math.floor(Math.random() * videoAdSources.length)];
   const skipDelay = Math.floor(Math.random() * 11) + 5; // 5–15s
-  const overlay = document.getElementById('videoAdOverlay');
   const player = document.getElementById('videoAdPlayer');
   const source = document.getElementById('videoAdSource');
   const waiting = document.getElementById('videoAdWaiting');
   const skipBtn = document.getElementById('videoAdSkipBtn');
   const countdown = document.getElementById('videoAdCountdown');
 
+  // Attach skip listener fresh every time (replace to avoid duplicate listeners)
+  const newBtn = skipBtn.cloneNode(true);
+  skipBtn.parentNode.replaceChild(newBtn, skipBtn);
+  newBtn.addEventListener('click', closeVideoAd);
+
   source.src = src;
   player.loop = true;
   player.muted = false;
   player.load();
-  player.play().catch(() => { player.muted = true; player.play(); });
+  player.play().catch(() => { player.muted = true; player.play().catch(()=>{}); });
+
   waiting.style.display = 'inline-block';
-  skipBtn.style.display = 'none';
+  newBtn.style.display = 'none';
   countdown.textContent = skipDelay;
   overlay.style.display = 'flex';
 
@@ -1916,19 +1932,11 @@ function showVideoAd() {
     countdown.textContent = secs;
     if (secs <= 0) {
       clearInterval(videoAdCountdownInterval);
+      videoAdCountdownInterval = null;
       waiting.style.display = 'none';
-      skipBtn.style.display = 'inline-block';
+      newBtn.style.display = 'inline-block';
     }
   }, 1000);
-}
-
-function closeVideoAd() {
-  clearInterval(videoAdCountdownInterval);
-  const overlay = document.getElementById('videoAdOverlay');
-  const player = document.getElementById('videoAdPlayer');
-  player.pause();
-  player.loop = false;
-  overlay.style.display = 'none';
 }
 
 window.addEventListener('DOMContentLoaded', injectAds);
